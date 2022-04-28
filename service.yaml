@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: helloworld-springboot-tomcat-svc
+spec:
+  template:
+    spec:
+      containers:
+        - image: gcr.io/cloudrun-314201/randomquotesjava:0.1.189
+          ports:
+            - name: http1
+              containerPort: 80
