@@ -22,6 +22,14 @@ ARTIFACT_REGISTRY REPOSITORY FORMAT  DESCRIPTION                       LOCATION
 LABELS                                                                                                                                                                                    ENCRYPTION          CREATE_TIME          UPDATE_TIME          SIZE (MB)
 
 ### Create a new repository with Docker format
+### export REPO_NAME=quickstart-docker-repo
+### export GCP_REGION="us-east4" 
+
+### gcloud artifacts repositories create $REPO_NAME \
+###    --repository-format=docker \
+###    --location=$GCP_REGION \
+###    --description="Docker repository"
+    
 ➜ gcloud artifacts repositories create quickstart-docker-repo --repository-format=docker \
 --location=us-east4 --description="Docker repository"
 Create request issued for: [quickstart-docker-repo]
@@ -38,6 +46,23 @@ LOCATION       LABELS                                                           
 quickstart-docker-repo                               DOCKER  Docker repository                 us-east4                                                                                                                                                                                                     Google-managed key  2022-04-26T23:48:06  2022-04-26T23:48:06  0
 
 ### Configure authentication to GCP for Docker
+## Configure authentication to GCP for Docker
+### Authorization account used  ( your own user account or service account may be used for authentication)
+### Currently own user account is used for authentication. You may change this to use the service account ( todo later)
+➜   gcloud auth list
+                            Credentialed Accounts
+ACTIVE  ACCOUNT
+*       binu.b.varghese@accenture.com
+        sa-d-use4-xxx@PROJECT_ID.iam.gserviceaccount.com
+        sa-gcr-mgmt-use4-xxx@PROJECT_ID.iam.gserviceaccount.com
+
+To set the active account, run:
+    $ gcloud config set account `ACCOUNT`
+# configure auth
+gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
+
+➜ 
+
 ➜ gcloud auth configure-docker us-east4-docker.pkg.dev
 WARNING: Your config file at [/Users/binu.b.varghese/.docker/config.json] contains these credential helper entries:
 
@@ -54,6 +79,38 @@ WARNING: Your config file at [/Users/binu.b.varghese/.docker/config.json] contai
 }
 Adding credentials for: us-east4-docker.pkg.dev
 gcloud credential helpers already registered correctly.
+
+### gcloud auth configure-docker us-east4-docker.pkg.dev creates the config file or add the repository to an existing config file
+### docker auth config file is in the location $HOME/.docker/config.json
+### Verify the docker auth config file
+➜   ls $HOME/.docker/config.json
+/Users/binu.b.varghese/.docker/config.json
+
+➜  cat /Users/binu.b.varghese/.docker/config.json
+{
+  "credHelpers" : {
+    "gcr.io" : "gcr",
+    "staging-k8s.gcr.io" : "gcr",
+    "us.gcr.io" : "gcr",
+    "asia.gcr.io" : "gcr",
+    "marketplace.gcr.io" : "gcloud",
+    "us-east4-docker.pkg.dev" : "gcloud",
+    "eu.gcr.io" : "gcr"
+  },
+  "auths" : {
+    "gcr.io" : {
+
+    },
+    "us.gcr.io" : {
+
+    }
+  },
+  "credsStore" : "desktop"
+}
+
+➜   cat $HOME/.docker/config.json | grep us-east4-docker.pkg.dev
+    "us-east4-docker.pkg.dev" : "gcloud",
+
 
 ## Create a Java Springboot project ; Copying the java project from an existing project from the following location
 ➜  git clone https://github.com/saturnism/jvm-helloworld-by-example.git
